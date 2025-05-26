@@ -11,10 +11,10 @@ The entire pipeline is designed to be run locally, showcasing a modern ELT appro
 The pipeline follows a modern **ELT (Extract, Load, Transform)** architecture. The process is orchestrated by a simple shell script that ensures each step runs in the correct sequence.
 
 ```
-┌─────────────────────────┐     ┌──────────────────────┐      ┌───────────────────────────┐      ┌──────────────────┐
-│  1. Raw Data Sources    ├────►│  2. Load into Warehouse  ├─────►│  3. Transform & Test        ├─────►│  4. Final Table  │
-│  (Simulated CSVs)       │     │  (dbt seed)          │      │  (dbt run & dbt test)     │      │  (MMM Ready Data)│
-└─────────────────────────┘     └──────────────────────┘      └───────────────────────────┘      └──────────────────┘
+┌─────────────────────────┐     ┌──────────────────────────┐      ┌───────────────────────────┐      ┌──────────────────┐
+│  1. Raw Data Sources    ├────►│  2. Load into Warehouse  ├─────►│  3. Transform & Test      ├─────►│  4. Final Table  │
+│  (Simulated CSVs)       │     │  (dbt seed)              │      │  (dbt run & dbt test)     │      │  (MMM Ready Data)│
+└─────────────────────────┘     └──────────────────────────┘      └───────────────────────────┘      └──────────────────┘
 ```
 
 1.  **Extract (Simulated):** A Python script (`pipeline_scripts/generate_data.py`) generates realistic, raw time-series data for multiple ad channels, a CRM system, and control variables (like holidays). This simulates pulling from various production APIs.
