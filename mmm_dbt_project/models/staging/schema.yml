@@ -1,0 +1,53 @@
+version: 2
+
+# This section defines the raw sources (your seeds)
+sources:
+  - name: seeds
+    schema: raw # This matches the schema defined in dbt_project.yml
+    tables:
+      - name: raw_facebook_spend
+      - name: raw_google_spend
+      - name: raw_tiktok_spend
+      - name: raw_crm_sales
+      - name: raw_control_variables
+
+# This section defines models and applies tests to them
+models:
+  - name: stg_facebook_spend
+    columns:
+      - name: date
+        tests:
+          - not_null
+          - unique
+      - name: spend
+        tests:
+          - not_null
+          - dbt_expectations.expect_column_values_to_be_positive
+
+  - name: stg_google_spend
+    columns:
+      - name: date
+        tests:
+          - not_null
+          - unique
+      - name: spend # Testing after renaming!
+        tests:
+          - not_null
+          - dbt_expectations.expect_column_values_to_be_positive
+
+  - name: stg_crm_sales
+    columns:
+      - name: date
+        tests:
+          - not_null
+      - name: revenue
+        tests:
+          - not_null
+          - dbt_expectations.expect_column_values_to_be_positive
+
+  - name: mmm_aggregated_data
+    columns:
+      - name: date
+        tests:
+          - unique
+          - not_null
