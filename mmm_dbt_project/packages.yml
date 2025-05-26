@@ -1,0 +1,6 @@
+# mmm_dbt_project/packages.yml
+packages:
+  - package: calogica/dbt_expectations
+    version: "0.10.3" # <--- Corrected format (string)
+  - package: dbt-labs/dbt_utils
+    version: "1.1.1"  # <--- Corrected format (string)

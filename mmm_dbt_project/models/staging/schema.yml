@@ -4,7 +4,7 @@ version: 2
 
 sources:
   - name: seeds
-    schema: main_raw
+    schema: main_raw # Ensure this matches what dbt seed creates
     tables:
       - name: raw_facebook_spend
       - name: raw_google_spend
@@ -13,41 +13,203 @@ sources:
       - name: raw_control_variables
 
 models:
+  - name: stg_control_variables
+    columns:
+      - name: date
+        tests:
+          - unique
+          - not_null
+          - dbt_expectations.expect_column_values_to_be_of_type:
+              column_type: date
+      - name: is_holiday
+        tests:
+          - not_null
+          - dbt_expectations.expect_column_values_to_be_of_type:
+              column_type: integer
+          - dbt_expectations.expect_column_values_to_be_in_set:
+              value_set: [0, 1]
+
   - name: stg_facebook_spend
     columns:
       - name: date
         tests:
-          - not_null
           - unique
+          - not_null
+          - dbt_expectations.expect_column_values_to_be_of_type:
+              column_type: date
+          - relationships: 
+              to: ref('stg_control_variables')
+              field: date
       - name: spend
         tests:
           - not_null
-          - expect_column_values_to_be_positive # Calling your custom test
+          - dbt_expectations.expect_column_values_to_be_of_type:
+              column_type: integer # Changed from number
+          - dbt_expectations.expect_column_values_to_be_between:
+              min_value: 0
+              max_value: 1000000 
+      - name: impressions
+        tests:
+          - not_null
+          - dbt_expectations.expect_column_values_to_be_of_type:
+              column_type: integer # Changed from number
+          - dbt_expectations.expect_column_values_to_be_between:
+              min_value: 0
+      - name: clicks
+        tests:
+          - not_null
+          - dbt_expectations.expect_column_values_to_be_of_type:
+              column_type: integer # Changed from number
+          - dbt_expectations.expect_column_values_to_be_between:
+              min_value: 0
 
   - name: stg_google_spend
     columns:
       - name: date
         tests:
-          - not_null
           - unique
+          - not_null
+          - dbt_expectations.expect_column_values_to_be_of_type:
+              column_type: date
+          - relationships:
+              to: ref('stg_control_variables')
+              field: date
       - name: spend 
         tests:
           - not_null
-          - expect_column_values_to_be_positive # Calling your custom test
-
-  - name: stg_crm_sales
-    columns:
-      - name: date
+          - dbt_expectations.expect_column_values_to_be_of_type:
+              column_type: integer # Changed from number
+          - dbt_expectations.expect_column_values_to_be_between:
+              min_value: 0
+              max_value: 1000000 
+      - name: impressions
         tests:
           - not_null
-      - name: revenue
+          - dbt_expectations.expect_column_values_to_be_of_type:
+              column_type: integer # Changed from number
+          - dbt_expectations.expect_column_values_to_be_between:
+              min_value: 0
+      - name: clicks
         tests:
           - not_null
-          - expect_column_values_to_be_positive # Calling your custom test
+          - dbt_expectations.expect_column_values_to_be_of_type:
+              column_type: integer # Changed from number
+          - dbt_expectations.expect_column_values_to_be_between:
+              min_value: 0
 
-  - name: mmm_aggregated_data
+  - name: stg_tiktok_spend
     columns:
       - name: date
         tests:
           - unique
           - not_null
+          - dbt_expectations.expect_column_values_to_be_of_type:
+              column_type: date
+          - relationships:
+              to: ref('stg_control_variables')
+              field: date
+      - name: spend
+        tests:
+          - not_null
+          - dbt_expectations.expect_column_values_to_be_of_type:
+              column_type: integer # Changed from number
+          - dbt_expectations.expect_column_values_to_be_between:
+              min_value: 0
+              max_value: 1000000
+      - name: impressions
+        tests:
+          - not_null
+          - dbt_expectations.expect_column_values_to_be_of_type:
+              column_type: integer # Changed from number
+          - dbt_expectations.expect_column_values_to_be_between:
+              min_value: 0
+      - name: clicks
+        tests:
+          - not_null
+          - dbt_expectations.expect_column_values_to_be_of_type:
+              column_type: integer # Changed from number
+          - dbt_expectations.expect_column_values_to_be_between:
+              min_value: 0
+
+  - name: stg_crm_sales
+    columns:
+      - name: date 
+        tests:
+          - not_null 
+          - dbt_expectations.expect_column_values_to_be_of_type:
+              column_type: date
+          - relationships: 
+              to: ref('stg_control_variables')
+              field: date
+      - name: revenue
+        tests:
+          - not_null
+          - dbt_expectations.expect_column_values_to_be_of_type:
+              column_type: integer # Changed from number
+          - dbt_expectations.expect_column_values_to_be_between:
+              min_value: 0
+              max_value: 500000 
+
+  - name: mmm_aggregated_data 
+    columns:
+      - name: date
+        tests:
+          - unique
+          - not_null
+          - dbt_expectations.expect_column_values_to_be_of_type:
+              column_type: date
+      - name: spend_facebook
+        tests:
+          - not_null
+          - dbt_expectations.expect_column_values_to_be_between: # these are aggregated, could be float
+              min_value: 0
+      - name: impressions_facebook 
+        tests:
+          - not_null
+          - dbt_expectations.expect_column_values_to_be_between:
+              min_value: 0
+      - name: clicks_facebook
+        tests:
+          - not_null
+          - dbt_expectations.expect_column_values_to_be_between:
+              min_value: 0
+      - name: spend_google
+        tests:
+          - not_null
+          - dbt_expectations.expect_column_values_to_be_between:
+              min_value: 0
+      - name: impressions_google
+        tests:
+          - not_null
+          - dbt_expectations.expect_column_values_to_be_between:
+              min_value: 0
+      - name: clicks_google
+        tests:
+          - not_null
+          - dbt_expectations.expect_column_values_to_be_between:
+              min_value: 0
+      - name: spend_tiktok
+        tests:
+          - not_null
+          - dbt_expectations.expect_column_values_to_be_between:
+              min_value: 0
+      - name: impressions_tiktok
+        tests:
+          - not_null
+          - dbt_expectations.expect_column_values_to_be_between:
+              min_value: 0
+      - name: clicks_tiktok
+        tests:
+          - not_null
+          - dbt_expectations.expect_column_values_to_be_between:
+              min_value: 0
+      - name: total_revenue
+        tests:
+          - not_null
+          - dbt_expectations.expect_column_values_to_be_between:
+              min_value: 0
+      - name: is_holiday
+        tests:
+          - not_null
+          - dbt_expectations.expect_column_values_to_be_in_set:
+              value_set: [0, 1]
