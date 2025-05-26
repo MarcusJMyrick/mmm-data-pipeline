@@ -1,0 +1,8 @@
+# ~/.dbt/profiles.yml
+mmm_dbt_project:
+  target: dev
+  outputs:
+    dev:
+      type: duckdb
+      path: mmm_dbt.duckdb # This file will be created in your project folder
+      threads: 4

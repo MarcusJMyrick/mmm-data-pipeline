@@ -1,0 +1,33 @@
+name: 'mmm_dbt_project'
+version: '1.0.0'
+config-version: 2
+
+# This setting configures which folder to look for models in.
+model-paths: ["models"]
+seed-paths: ["seeds"]
+test-paths: ["tests"]
+macro-paths: ["macros"]
+
+# This tells dbt how to materialize tables. We'll use tables.
+models:
+  mmm_dbt_project:
+    staging:
+      +materialized: view
+    marts:
+      +materialized: table
+
+# This section tells dbt to treat the CSV files in your 'seeds' directory as tables.
+# We also specify column types to ensure correct parsing.
+seeds:
+  mmm_dbt_project:
+    +schema: raw # This will create a 'raw' schema in your warehouse
+    raw_facebook_spend:
+      +column_types: { date: date }
+    raw_google_spend:
+      +column_types: { date: date }
+    raw_tiktok_spend:
+      +column_types: { date: date }
+    raw_crm_sales:
+      +column_types: { transaction_date: date }
+    raw_control_variables:
+      +column_types: { date: date }
