@@ -6,7 +6,7 @@ The entire pipeline is designed to be run locally, showcasing a modern ELT appro
 
 ---
 
-## 🏛️ Architecture
+## Architecture
 
 The pipeline follows a modern **ELT (Extract, Load, Transform)** architecture. The process is orchestrated by a simple shell script that ensures each step runs in the correct sequence.
 
@@ -26,7 +26,7 @@ The pipeline follows a modern **ELT (Extract, Load, Transform)** architecture. T
     
 ---
 
-## 🛠️ Tech Stack
+## Tech Stack
 
 * **Orchestration:** Bash Script (`run_pipeline.sh`)
 * **Transformation & Testing:** [dbt (Data Build Tool)](https://www.getdbt.com/) with the [dbt-expectations](https://github.com/calogica/dbt-expectations) package
@@ -36,7 +36,7 @@ The pipeline follows a modern **ELT (Extract, Load, Transform)** architecture. T
 
 ---
 
-## 🚀 Getting Started
+## Getting Started
 
 ### Prerequisites
 
@@ -103,7 +103,7 @@ The pipeline follows a modern **ELT (Extract, Load, Transform)** architecture. T
 
 ---
 
-## 🔮 Future Improvements
+## Future Improvements
 
 This prototype provides a solid foundation. Future enhancements would include:
 
