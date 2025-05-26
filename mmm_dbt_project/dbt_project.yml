@@ -1,4 +1,7 @@
+# mmm_dbt_project/dbt_project.yml
+
 name: 'mmm_dbt_project'
+profile: 'mmm_dbt_project'  # This line links to your profiles.yml
 version: '1.0.0'
 config-version: 2
 

@@ -1,9 +1,10 @@
+# mmm_dbt_project/models/staging/schema.yml
+
 version: 2
 
-# This section defines the raw sources (your seeds)
 sources:
   - name: seeds
-    schema: raw # This matches the schema defined in dbt_project.yml
+    schema: main_raw
     tables:
       - name: raw_facebook_spend
       - name: raw_google_spend
@@ -11,7 +12,6 @@ sources:
       - name: raw_crm_sales
       - name: raw_control_variables
 
-# This section defines models and applies tests to them
 models:
   - name: stg_facebook_spend
     columns:
@@ -22,7 +22,7 @@ models:
       - name: spend
         tests:
           - not_null
-          - dbt_expectations.expect_column_values_to_be_positive
+          - expect_column_values_to_be_positive # Calling your custom test
 
   - name: stg_google_spend
     columns:
@@ -30,10 +30,10 @@ models:
         tests:
           - not_null
           - unique
-      - name: spend # Testing after renaming!
+      - name: spend 
         tests:
           - not_null
-          - dbt_expectations.expect_column_values_to_be_positive
+          - expect_column_values_to_be_positive # Calling your custom test
 
   - name: stg_crm_sales
     columns:
@@ -43,7 +43,7 @@ models:
       - name: revenue
         tests:
           - not_null
-          - dbt_expectations.expect_column_values_to_be_positive
+          - expect_column_values_to_be_positive # Calling your custom test
 
   - name: mmm_aggregated_data
     columns:
