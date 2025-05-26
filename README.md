@@ -17,21 +17,22 @@ The pipeline follows a modern **ELT (Extract, Load, Transform)** architecture. T
 └─────────────────────────┘     └──────────────────────┘      └───────────────────────────┘      └──────────────────┘
 ```
 
-1.  **Extract (Simulated):** A Python script (`pipeline_scripts/generate_data.py`) generates realistic, raw time-series data for multiple ad channels and a CRM system. This simulates pulling from various production APIs.
-2.  **Load:** The `dbt seed` command loads the raw CSVs into a DuckDB data warehouse, creating a structured, raw data layer.
+1.  **Extract (Simulated):** A Python script (`pipeline_scripts/generate_data.py`) generates realistic, raw time-series data for multiple ad channels, a CRM system, and control variables (like holidays). This simulates pulling from various production APIs.
+2.  **Load:** The `dbt seed` command loads the raw CSVs from the `mmm_dbt_project/seeds/` directory into a DuckDB data warehouse, creating a structured, raw data layer.
 3.  **Transform:** A series of `dbt` models transform the data.
-    * **Staging Models:** Clean, standardize, and prepare each raw source independently.
+    * **Staging Models:** Clean, standardize data types, and prepare each raw source independently.
     * **Mart Model:** Joins the staging tables and aggregates the data into the final wide, time-series format required for an MMM.
-    * **Data Quality Tests:** `dbt test` validates the integrity of the data throughout the process (e.g., checking for nulls, ensuring spend is positive).
-
+    * **Data Quality Tests:** `dbt test` validates the integrity of the data throughout the process. This includes checks for nulls, uniqueness, data types, value ranges (e.g., spend is positive and within reasonable bounds), accepted values (e.g., `is_holiday` is 0 or 1), and referential integrity between tables, leveraging both built-in dbt tests and the `dbt-expectations` package.
+    
 ---
 
 ## 🛠️ Tech Stack
 
 * **Orchestration:** Bash Script (`run_pipeline.sh`)
-* **Transformation & Testing:** [dbt (Data Build Tool)](https://www.getdbt.com/)
+* **Transformation & Testing:** [dbt (Data Build Tool)](https://www.getdbt.com/) with the [dbt-expectations](https://github.com/calogica/dbt-expectations) package
 * **Data Warehouse:** [DuckDB](https://duckdb.org/) (via `dbt-duckdb`)
 * **Core Language & Data Manipulation:** Python 3 & Pandas
+* **External Data Libraries:** `holidays` (for generating holiday control variables)
 
 ---
 
@@ -46,15 +47,16 @@ The pipeline follows a modern **ELT (Extract, Load, Transform)** architecture. T
 
 1.  **Clone the repository:**
     ```bash
-    git clone [https://github.com/](https://github.com/)MarcusJMyrick/mmm-data-pipeline.git
+    git clone [https://github.com/](https://github.com/)<your-username>/mmm-data-pipeline.git
     cd mmm-data-pipeline
     ```
+    *(Remember to replace `<your-username>` with your actual GitHub username if you're sharing this link.)*
 
 2.  **Set up a virtual environment and install dependencies:**
     ```bash
     python3 -m venv venv
     source venv/bin/activate
-    pip install pandas numpy dbt-core dbt-duckdb
+    pip install pandas numpy dbt-core dbt-duckdb holidays dbt-expectations
     ```
 
 3.  **Configure your dbt profile:**
@@ -65,18 +67,28 @@ The pipeline follows a modern **ELT (Extract, Load, Transform)** architecture. T
       outputs:
         dev:
           type: duckdb
-          path: mmm_dbt.duckdb
+          path: mmm_dbt.duckdb 
+          # Ensure this path is relative to your dbt project, 
+          # or an absolute path if you prefer. 
+          # If 'mmm_dbt_project' is the root of your dbt project, 
+          # dbt will create mmm_dbt.duckdb inside the mmm_dbt_project folder.
     ```
 
-4.  **Run the entire pipeline:**
-    This single command will generate the raw data and run the full ELT process.
+4.  **Install dbt packages:**
+    This step installs `dbt-expectations` and `dbt-utils` as defined in `mmm_dbt_project/packages.yml`.
+    ```bash
+    dbt deps --project-dir mmm_dbt_project
+    ```
+
+5.  **Run the entire pipeline:**
+    This single command will generate the raw data, load it, transform it, run data quality tests, and export the final table.
     ```bash
     bash run_pipeline.sh
     ```
 
-5.  **Access the Final Data:**
-    The final output table is located at `data/processed/mmm_data.csv`, which is created by the final step in the `run_pipeline.sh` script.
-
+6.  **Access the Final Data:**
+    The final output table is located at `data/processed/mmm_data.csv`.
+    
 ---
 
 ## 📂 Project Structure
