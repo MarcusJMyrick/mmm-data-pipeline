@@ -47,10 +47,9 @@ The pipeline follows a modern **ELT (Extract, Load, Transform)** architecture. T
 
 1.  **Clone the repository:**
     ```bash
-    git clone [https://github.com/](https://github.com/)<your-username>/mmm-data-pipeline.git
+    git clone [https://github.com/](https://github.com/)MarcusJMyrick/mmm-data-pipeline.git
     cd mmm-data-pipeline
     ```
-    *(Remember to replace `MarcusJMyrick` with your actual GitHub username if you're sharing this link.)*
 
 2.  **Set up a virtual environment and install dependencies:**
     ```bash
